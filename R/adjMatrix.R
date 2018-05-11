@@ -32,11 +32,13 @@ matrix2list <- function(M){
 #', c( -5,  8, -10 )
 #', c( -5, -5, -10 ))
 #'adjMatrix(v)
-adjMatrix <- function(vertices, outfile=tempfile(fileext=.txt)){
+adjMatrix <- function(vertices, outfile=tempfile(fileext=".txt")){
   infile <- matrix2list(vertices)
+  exe <- ifelse(.Platform$OS.type == "windows",
+                system.file("bin", "windows", "adjacencymatrix.exe", package="delaunayadjacency"),
+                system.file("bin", "unix", "adjacencymatrix", package="delaunayadjacency"))
   command <- sprintf("%s %s %s",
-                     system.file("bin", "windows", "adjacencymatrix.exe", package="delaunayadjacency"),
-                     infile, outfile)
+                     exe, infile, outfile)
   system(command)
   outfile <- strsplit(readr::read_file(outfile), "\\]\r\n\\[")[[1]]
   outfile <- gsub("\\[", "", gsub("\\]", "", outfile))
